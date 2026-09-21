@@ -1,0 +1,12 @@
+{
+  "servers": {
+    "studymate-context": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["${workspaceFolder}/scripts/studymate-mcp-server.mjs"],
+      "env": {
+        "STUDYMATE_MCP_CONTEXT_FILE": "${workspaceFolder}/mcp/studymate-demo-context.json"
+      }
+    }
+  }
+}

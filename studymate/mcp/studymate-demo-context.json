@@ -1,0 +1,22 @@
+{
+  "pages": [
+    {
+      "title": "Negligence",
+      "type": "principle",
+      "source_material": "Law of Torts Lecture Notes.pdf",
+      "content": "Negligence requires duty of care, breach of that duty, causation, and damage. In an exam answer, identify each element and apply it to the facts."
+    },
+    {
+      "title": "Donoghue v Stevenson",
+      "type": "case",
+      "source_material": "Torts Cases Handout.pdf",
+      "content": "Donoghue v Stevenson established the neighbour principle: a person must take reasonable care to avoid acts or omissions likely to injure closely and directly affected persons."
+    },
+    {
+      "title": "Specific performance",
+      "type": "principle",
+      "source_material": "Equity Seminar Notes.docx",
+      "content": "Specific performance is a discretionary equitable remedy granted where damages are inadequate, often where the subject matter is unique."
+    }
+  ]
+}

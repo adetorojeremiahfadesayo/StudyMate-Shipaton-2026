@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" fill="none">
+  <defs>
+    <linearGradient id="bgWarm" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFF9EE"/>
+      <stop offset="100%" stop-color="#F1E7D0"/>
+    </linearGradient>
+    <linearGradient id="bgCool" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F7FAFF"/>
+      <stop offset="100%" stop-color="#E8F0FF"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.88"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="shadowFade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(25, 32, 51, 0.08)" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="rgba(25, 32, 51, 0.08)" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#192033" flood-opacity="0.18"/>
+    </filter>
+    <filter id="innerGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="#FFFFFF" flood-opacity="0.5"/>
+    </filter>
+    
+  </defs>
+  
+  
+      <g transform="translate(512 512)">
+        <circle cx="0" cy="0" r="170" fill="#FFF6D9" opacity="0.9"/>
+        <circle cx="0" cy="0" r="130" fill="#D8B35A" opacity="0.95"/>
+        <polygon points="4.531193156845207e-15,-74 20.008209988035784,-27.53893848852321 70.37818220584136,-22.867257583746106 32.37396381468702,10.51893848852321 43.496108669643014,59.86725758374611 2.084348852148795e-15,34.04 -43.49610866964301,59.86725758374611 -32.37396381468702,10.518938488523213 -70.37818220584137,-22.8672575837461 -20.008209988035787,-27.538938488523208" fill="#FFF8EC" opacity="0.94"/>
+        <path d="M -122 -28 L -94 -12" stroke="#B98B2F" stroke-width="12" stroke-linecap="round"/>
+        <path d="M 122 -28 L 94 -12" stroke="#B98B2F" stroke-width="12" stroke-linecap="round"/>
+      </g>
+</svg>

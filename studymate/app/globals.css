@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+:root {
+  --background: #05080f;
+  --foreground: #fdf5e6;
+  --font-display: "Georgia", "Times New Roman", serif;
+  --font-body: "Inter", "Segoe UI", Arial, sans-serif;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-body);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), system-ui, sans-serif;
+  min-height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: rgba(255, 215, 0, 0.22);
+  color: #fff9df;
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -16px, 0) scale(1.05);
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes glowPulse {
+  0%,
+  100% {
+    opacity: 0.7;
+    filter: blur(70px);
+  }
+  50% {
+    opacity: 1;
+    filter: blur(88px);
+  }
+}
+
+@keyframes mateyFloat {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+}
+
+@keyframes xpPop {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-drift {
+  animation: drift 10s ease-in-out infinite;
+}
+
+.animate-drift-slow {
+  animation: drift 14s ease-in-out infinite;
+}
+
+.animate-marquee {
+  animation: marquee 24s linear infinite;
+}
+
+.animate-shimmer {
+  background-size: 200% 100%;
+  animation: shimmer 12s linear infinite;
+}
+
+.animate-glow-pulse {
+  animation: glowPulse 8s ease-in-out infinite;
+}
+
+.matey-float {
+  animation: mateyFloat 3.6s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+.xp-pop {
+  animation: xpPop 360ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .matey-float,
+  .xp-pop {
+    animation: none;
+  }
+}
