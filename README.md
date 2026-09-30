@@ -2,7 +2,7 @@
 
 Android implementation workspace for the RevenueCat Shipaton 2026 Next Gen track, prepared for development with Hoplite.
 
-**Status:** existing StudyMate web/backend source plus a mobile implementation plan. The Android app and RevenueCat integration are not yet implemented or verified here.
+**Status:** a first Android client and RevenueCat purchase/restore path are implemented on the `codex/mobile-mvp` branch. The mobile TypeScript/Vite build passes. Native runtime, live AI, purchase and submission remain unverified; see [implementation status](docs/implementation-status.md).
 
 ## Start with Hoplite
 
@@ -25,7 +25,7 @@ npm run dev
 
 Baseline checks: `npm run lint`, `npm test`, `npm run build`. They have not been run during repository preparation. The sample demo is not evidence of live service integration. See the existing [product context](studymate/CONTEXT.md) and [original README](docs/original-README.md).
 
-The planned mobile client belongs in `mobile/`; it has not been scaffolded yet. Read the plan before implementation.
+The mobile client and generated Android project are in [mobile/](mobile/README.md). Follow its setup steps for local builds.
 
 ## Source and release
 

@@ -6,12 +6,21 @@ import { createSupabaseRouteClient } from "@/lib/supabase-route";
 
 const DEMO_USER_ID = process.env.NEXT_PUBLIC_DEMO_USER_ID ?? "c2c92fa5-bb78-4875-93c9-4fc58057a7a9";
 
-export async function getAuthenticatedRouteSupabase(): Promise<
+export async function getAuthenticatedRouteSupabase(request?: Request): Promise<
   | { user: User; supabase: Awaited<ReturnType<typeof createSupabaseRouteClient>> }
   | null
 > {
   if (IS_DEMO_MODE) {
     return { user: DEMO_USER, supabase: supabaseAdmin };
+  }
+
+  const authorization = request?.headers.get("authorization");
+  if (authorization?.startsWith("Bearer ")) {
+    const token = authorization.slice(7).trim();
+    if (!token) return null;
+    const { data, error } = await supabaseAdmin.auth.getUser(token);
+    if (error || !data.user) return null;
+    return { user: data.user, supabase: supabaseAdmin };
   }
 
   const supabase = await createSupabaseRouteClient();

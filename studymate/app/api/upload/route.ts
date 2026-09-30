@@ -20,7 +20,7 @@ function isMissingOcrProgressError(errorMessage?: string) {
 
 export async function POST(request: NextRequest) {
   try {
-    const authenticated = await getAuthenticatedRouteSupabase();
+    const authenticated = await getAuthenticatedRouteSupabase(request);
     if (!authenticated) {
       return unauthorizedResponse();
     }

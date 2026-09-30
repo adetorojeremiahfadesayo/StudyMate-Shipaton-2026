@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedRouteSupabase, unauthorizedResponse } from "@/lib/route-helpers";
 import { generateQuizQuestions } from "@/lib/quiz-agent";
 import { normalizeEducationLevel } from "@/lib/learning-profile";
+import { hasRevenueCatPro } from "@/lib/revenuecat-access";
 
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
   try {
-    const authenticated = await getAuthenticatedRouteSupabase();
+    const authenticated = await getAuthenticatedRouteSupabase(request);
     if (!authenticated) {
       return unauthorizedResponse();
     }
@@ -21,6 +22,13 @@ export async function POST(request: NextRequest) {
 
     if (!body.courseId || !body.quizType || typeof body.questionCount !== "number") {
       return NextResponse.json({ error: "Missing course ID, quiz type, or question count." }, { status: 400 });
+    }
+
+    if (!Number.isInteger(body.questionCount) || body.questionCount < 1 || body.questionCount > 5) {
+      return NextResponse.json({ error: "Question count must be between 1 and 5." }, { status: 400 });
+    }
+    if (body.questionCount > 3 && !(await hasRevenueCatPro(user.id))) {
+      return NextResponse.json({ error: "StudyMate Pro is required for a five-question set.", code: "PRO_REQUIRED" }, { status: 403 });
     }
 
     const educationLevel = normalizeEducationLevel(user.user_metadata?.education_level) ?? "tertiary";
