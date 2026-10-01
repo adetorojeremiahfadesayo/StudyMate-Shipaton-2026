@@ -8,7 +8,7 @@ export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
   try {
-    const authenticated = await getAuthenticatedRouteSupabase();
+    const authenticated = await getAuthenticatedRouteSupabase(request);
     if (!authenticated) {
       return unauthorizedResponse();
     }
@@ -56,4 +56,3 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
-

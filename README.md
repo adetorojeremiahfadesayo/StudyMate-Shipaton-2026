@@ -2,7 +2,7 @@
 
 Android implementation workspace for the RevenueCat Shipaton 2026 Next Gen track, prepared for development with Hoplite.
 
-**Status:** a first Android client and RevenueCat purchase/restore path are implemented on the `codex/mobile-mvp` branch. The mobile TypeScript/Vite build passes. Native runtime, live AI, purchase and submission remain unverified; see [implementation status](docs/implementation-status.md).
+**Status:** a first Android client, course report PDF path, and RevenueCat purchase/restore path are implemented on the `codex/mobile-mvp` branch. The mobile TypeScript/Vite build passes. Native runtime, live AI, purchase and submission remain unverified; see [implementation status](docs/implementation-status.md).
 
 ## Start with Hoplite
 

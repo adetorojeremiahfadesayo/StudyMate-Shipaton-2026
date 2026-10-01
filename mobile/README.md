@@ -11,4 +11,4 @@ This client uses the existing StudyMate backend. It does not contain server secr
 
 The app ID is `com.studymate.mobile`; register that exact ID in the relevant Android/RevenueCat configuration. A native build and Test Store purchase are required to validate billing. The browser preview intentionally reports native purchases as unavailable.
 
-Current scope: sign in, courses, upload, explanation, practice self-check, purchase/restore, and server-gated five-question sets. PDF revision and secure server-side quiz grading are still pending. See `../docs/implementation-status.md` for the current evidence and blockers.
+Current scope: sign in, courses, upload, explanation, practice self-check, course report PDF download/share, purchase/restore, and server-gated five-question sets. The PDF uses data already stored on the backend. Self-check answers are not persisted yet, and secure server-side quiz grading is pending. See `../docs/implementation-status.md` for the current evidence and blockers.
