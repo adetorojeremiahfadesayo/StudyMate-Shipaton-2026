@@ -1,7 +1,9 @@
 import type { Session, User } from "@supabase/supabase-js";
 
 export const DEMO_USER_ID = "c2c92fa5-bb78-4875-93c9-4fc58057a7a9";
-export const IS_DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+// The public /demo page is independent of this local dashboard shortcut.
+// Deployed APIs always authenticate real Supabase users, including judge accounts.
+export const IS_DEMO_MODE = process.env.NODE_ENV !== "production" && process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
 const MOCK_TOKEN = "studymate-demo-access-token";
 

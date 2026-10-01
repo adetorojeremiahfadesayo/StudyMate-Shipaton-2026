@@ -1,6 +1,10 @@
 import { defineConfig } from "vitest/config";
 import path from "path";
 
+// Railway sets NODE_ENV=production during builds; React's test helpers need
+// its test build. This affects only Vitest, not the following Next.js build.
+Object.assign(process.env, { NODE_ENV: "test" });
+
 export default defineConfig({
   resolve: {
     alias: {

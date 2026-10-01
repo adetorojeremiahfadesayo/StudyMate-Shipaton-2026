@@ -37,6 +37,8 @@ export default function Home() {
           <Link href="/" className="text-xl font-black tracking-tight">
             StudyMate
           </Link>
+          <div className="flex items-center gap-4">
+          <Link href="/login" className="text-sm font-bold underline underline-offset-4">Sign in</Link>
           <Link
             href="/demo"
             className="inline-flex items-center justify-center gap-2 rounded-full bg-[#13231f] px-5 py-3 text-sm font-black text-white shadow-lg shadow-emerald-950/10 transition hover:-translate-y-0.5 hover:bg-[#244239]"
@@ -44,6 +46,7 @@ export default function Home() {
             Try
             <ArrowRight className="h-4 w-4" />
           </Link>
+          </div>
         </nav>
 
         <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-10 pt-16 lg:grid-cols-[1fr_0.95fr] lg:pt-20">

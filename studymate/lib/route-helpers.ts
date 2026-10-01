@@ -4,16 +4,10 @@ import { DEMO_USER, IS_DEMO_MODE } from "@/lib/demo-auth";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { createSupabaseRouteClient } from "@/lib/supabase-route";
 
-const DEMO_USER_ID = process.env.NEXT_PUBLIC_DEMO_USER_ID ?? "c2c92fa5-bb78-4875-93c9-4fc58057a7a9";
-
 export async function getAuthenticatedRouteSupabase(request?: Request): Promise<
   | { user: User; supabase: Awaited<ReturnType<typeof createSupabaseRouteClient>> }
   | null
 > {
-  if (IS_DEMO_MODE) {
-    return { user: DEMO_USER, supabase: supabaseAdmin };
-  }
-
   const authorization = request?.headers.get("authorization");
   if (authorization?.startsWith("Bearer ")) {
     const token = authorization.slice(7).trim();
@@ -23,11 +17,15 @@ export async function getAuthenticatedRouteSupabase(request?: Request): Promise<
     return { user: data.user, supabase: supabaseAdmin };
   }
 
-  const supabase = await createSupabaseRouteClient();
-  const { data } = await supabase.auth.getSession();
-  const user = data?.session?.user;
+  if (IS_DEMO_MODE) {
+    return { user: DEMO_USER, supabase: supabaseAdmin };
+  }
 
-  if (!user) {
+  const supabase = await createSupabaseRouteClient();
+  const { data, error } = await supabase.auth.getUser();
+  const user = data?.user;
+
+  if (error || !user) {
     return null;
   }
 
@@ -51,10 +49,6 @@ export async function requireCourseOwnership(
   courseId: string,
   userId: string,
 ) {
-  if (userId === DEMO_USER_ID) {
-    return;
-  }
-
   const { data: course, error } = await supabase
     .from("courses")
     .select("id")

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { hasRevenueCatPro } from '@/lib/revenuecat-access';
+import { getRevenueCatAccess, hasRevenueCatPro } from '@/lib/revenuecat-access';
 
 const originalKey = process.env.REVENUECAT_SECRET_API_KEY;
 afterEach(() => {
@@ -29,5 +29,21 @@ describe('RevenueCat server entitlement', () => {
     process.env.REVENUECAT_SECRET_API_KEY = 'test-key';
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')));
     expect(await hasRevenueCatPro('student')).toBe(false);
+    expect(await getRevenueCatAccess('student')).toBe('unknown');
+  });
+
+  it('distinguishes confirmed free users from incomplete provider responses', async () => {
+    process.env.REVENUECAT_SECRET_API_KEY = 'test-key';
+    vi.stubGlobal('fetch', vi.fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ subscriber: { entitlements: {} } }) })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({}) }));
+    expect(await getRevenueCatAccess('student')).toBe('free');
+    expect(await getRevenueCatAccess('student')).toBe('unknown');
+  });
+
+  it('keeps verified school access ad-free', async () => {
+    process.env.REVENUECAT_SECRET_API_KEY = 'test-key';
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => ({ subscriber: { entitlements: { studymate_school: { expires_date: null } } } }) }));
+    expect(await getRevenueCatAccess('student')).toBe('paid');
   });
 });
