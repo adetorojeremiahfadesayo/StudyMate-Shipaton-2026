@@ -31,6 +31,7 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
+      - uses: android-actions/setup-android@v3
       - run: node scripts/validate-preview-config.mjs
       - name: Require Test Store configuration
         run: node -e "if (!process.env.VITE_REVENUECAT_PUBLIC_SDK_KEY?.startsWith('test_')) throw Error('This build requires a public RevenueCat Test Store key.');"
