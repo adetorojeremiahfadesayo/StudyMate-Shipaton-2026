@@ -20,4 +20,10 @@ The workflow installs pinned mobile dependencies, runs the existing ad policy te
 
 Once deployment succeeds, verify the published page, its JavaScript/assets, sign-in, server allowance, account isolation and sign-out. A successful browser check does not prove native purchases or Android behavior.
 
+## Android test build
+
+`.github/workflows/android-test-build.yml` is manually triggered and requires the public `VITE_REVENUECAT_PUBLIC_SDK_KEY` repository variable to use a `test_` key. It builds a debug APK with Java 21, Android SDK 36 and the pinned Gradle wrapper. GitHub Actions provides the build tooling; no Play Console account, signing key or store publication is used. The `StudyMate-Android-TestStore` artifact is an installable testing build, not evidence that native billing or ads worked.
+
+Use the existing approved judge account when testing sandbox billing. The server sandbox allowlist prevents purchases by other accounts from granting premium access or credit balances. Store-release billing is a separate configuration described in `android-release.md`.
+
 Reference: [GitHub's custom Pages workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).

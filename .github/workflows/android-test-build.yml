@@ -1,0 +1,50 @@
+name: Android Test Store build
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  android:
+    if: github.repository == 'adetorojeremiahfadesayo/StudyMate-Shipaton-2026'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+      VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
+      VITE_REVENUECAT_PUBLIC_SDK_KEY: ${{ vars.VITE_REVENUECAT_PUBLIC_SDK_KEY }}
+      VITE_ADS_ENABLED: 'true'
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: node scripts/validate-preview-config.mjs
+      - name: Require Test Store configuration
+        run: node -e "if (!process.env.VITE_REVENUECAT_PUBLIC_SDK_KEY?.startsWith('test_')) throw Error('This build requires a public RevenueCat Test Store key.');"
+      - run: npm ci
+      - run: npm test
+      - run: npm run android:sync
+      - name: Install Android SDK packages
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
+      - name: Build installable debug APK
+        working-directory: mobile/android
+        run: bash gradlew assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: StudyMate-Android-TestStore
+          path: mobile/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 30

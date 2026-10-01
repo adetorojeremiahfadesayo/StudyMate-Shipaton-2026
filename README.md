@@ -2,11 +2,13 @@
 
 StudyMate Mobile for RevenueCat Shipaton 2026: upload course material, learn in Plain or Story mode, practise, review feedback, and export a revision PDF.
 
-**Status:** authenticated study sessions, Free/Pro quotas, a credit ledger, Schools assignments/timers, saved grading and revision PDFs are implemented on `codex/mobile-mvp`. Backend tests, live API checks and one real AI study journey passed. Android purchase, ads and sharing remain unverified. The latest webhook null-field fix and topic-focused quiz update await backend deployment; see [implementation status](docs/implementation-status.md).
+**Status:** authenticated study sessions, Free/Pro quotas, a credit ledger, Schools assignments/timers, saved grading and revision PDFs are implemented on `codex/mobile-mvp`. Backend tests, live API checks and one real AI study journey passed. The latest backend fixes are deployed from GitHub to the existing Railway service. Android purchase, ads and sharing remain unverified; see [implementation status](docs/implementation-status.md).
 
 ## Hackathon browser preview
 
-The separate hackathon repository is being prepared as `adetorojeremiahfadesayo/StudyMate-Shipaton-2026`. Its GitHub Pages workflow builds the mobile client and uses the existing backend at `https://studymate-pro.up.railway.app`. Deployment results and the verified link will be recorded in the implementation status.
+**[Open the hackathon browser preview](https://adetorojeremiahfadesayo.github.io/StudyMate-Shipaton-2026/)** · **[Hackathon source repository](https://github.com/adetorojeremiahfadesayo/StudyMate-Shipaton-2026)**
+
+GitHub Pages builds the mobile client and uses the existing backend at `https://studymate-pro.up.railway.app`. The first Pages deployment succeeded; browser and backend verification results are recorded in the implementation status.
 
 Sign in with a StudyMate account to use the real backend. Judges can use the existing test account shared separately; its password is not included in this repository. Browser purchases are disabled; native RevenueCat billing requires Android. The website's separate `/demo` page contains sample material and does not prove billing or AI execution.
 
@@ -39,4 +41,4 @@ The mobile client and generated Android project are in [mobile/](mobile/README.m
 
 Imported from [adetorojeremiahfadesayo/StudyMate](https://github.com/adetorojeremiahfadesayo/StudyMate), source snapshot `5465815`, on September 21, 2026. This repository starts with a new commit history; the original history remains in the source repository. The upstream repository was not modified.
 
-The hackathon repository preserves this development history and the upstream attribution. Creating a separate repository does not imply that all work began during the event. Licensing, third-party asset rights, native runtime checks and final submission remain release checks; no submission readiness is implied.
+The hackathon repository preserves this development history and the upstream attribution. Creating a separate repository does not imply that all work began during the event. StudyMate code is available under the [MIT license](LICENSE), approved by its owner. Third-party components keep their own licenses. Asset rights, native runtime checks and final submission remain release checks; no submission readiness is implied.
