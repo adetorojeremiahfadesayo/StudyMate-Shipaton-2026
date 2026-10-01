@@ -8,6 +8,7 @@ Checked October 1, 2026 against the official [Devpost overview](https://revenuec
 
 - Public source repository: https://github.com/adetorojeremiahfadesayo/StudyMate-Shipaton-2026
 - Owner-approved MIT license and preserved upstream attribution/history.
+- Original 1024 × 1024 app icon and three 1179 × 2556 browser-preview screenshots prepared in `output/playwright/submission/`; upload and form attachment are not yet verified.
 - Live browser preview: https://adetorojeremiahfadesayo.github.io/StudyMate-Shipaton-2026/
 - Existing Railway backend deployed from the hackathon GitHub branch, including final quota/credit/Schools and webhook fixes.
 - RevenueCat Pro Test Store product, ten-session consumable and offerings configured. Live dashboard TEST webhook returned 200 without granting credits.
@@ -18,7 +19,7 @@ Checked October 1, 2026 against the official [Devpost overview](https://revenuec
 
 1. **Android testing:** install the Test Store APK on an Android device or emulator. Verify sign-in, upload → learn → practice → saved revision PDF, RevenueCat subscription/restore and ten-session top-up, account switch, Free ad behavior and PDF sharing. Record observed results. A dashboard TEST webhook is not a purchase.
 2. **Video:** show the app running on Android, a clear study journey and the real RevenueCat Test Store purchase/unlocked feature. Keep essential footage at or below two minutes. Upload to YouTube or Vimeo with a publicly accessible or unlisted link; private videos cannot be judged. Label Test Store behavior honestly.
-3. **Submission images:** prepare a 1024 × 1024 app icon and at least one 1179 × 2556 screenshot without a device frame. Use permitted assets and course material.
+3. **Submission images:** upload the prepared 1024 × 1024 app icon and at least one 1179 × 2556 screenshot without a device frame. The library image is the suggested first screenshot; label them as browser-preview captures.
 4. **Devpost form:** select Next Gen; provide the description, source link, video, images and judge-access instructions. Check that the Devpost account uses a recognized student/academic email. Complete any applicable age/guardian eligibility requirements and required confirmations truthfully. Submit and verify the receipt/status.
 
 ## Not required for Next Gen
