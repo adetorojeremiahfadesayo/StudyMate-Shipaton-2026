@@ -17,7 +17,7 @@
 
 **[🌐 Browser preview](https://adetorojeremiahfadesayo.github.io/Studymate-with-Matey/)** · **[📦 Android Test Store APK](https://github.com/adetorojeremiahfadesayo/Studymate-with-Matey/actions/runs/36902184856)** · **[🖥️ Backend / web app](https://studymate-pro.up.railway.app/)**
 
-[At a Glance](#-at-a-glance) | [How It Works](#-how-it-works) | [RevenueCat](#-powered-by-revenuecat) | [Architecture](#%EF%B8%8F-architecture) | [Quick Start](#-quick-start) | [Status](#-honest-status)
+[At a Glance](#-at-a-glance) | [Ada's Story](#-how-to-use-studymate--adas-story) | [RevenueCat](#-powered-by-revenuecat) | [Architecture](#%EF%B8%8F-architecture) | [Quick Start](#-quick-start) | [Status](#-honest-status)
 
 </div>
 
@@ -102,6 +102,24 @@ Matey is the friendly guide who turns StudyMate from a blank chat box into a com
 > 🖼️ Story art and Matey are shared with the StudyMate web foundation. Mobile submission screenshots (1179 × 2556) are browser-preview captures.
 
 ---
+
+## 📖 How to Use StudyMate — Ada's Story
+
+> *Meet Ada, a second-year law student. Her Tort Law exam is in nine days, and her notes are a 40-page lecture PDF, a few phone photos of the whiteboard and a past question she can't crack.*
+
+| | Ada's journey | What you do in the app |
+|:---:|---|---|
+| <img src="studymate/public/studymate-assets/matey/matey-welcome.png" width="90" alt="Matey welcoming" /> | **Day 1, 9 pm.** Ada signs in on her Android phone and Matey greets her. She creates a course called *Negligence: duty of care* and uploads her lecture PDF and whiteboard photos. | **Sign in → Courses → New course → Upload.** Your notes become the source StudyMate learns from. |
+| <img src="studymate/public/studymate-assets/matey/matey-reading.png" width="90" alt="Matey reading" /> | She types *"Negligence requirements"* and taps **Plain**. A clear explanation of duty, breach, causation and damage appears, with citations from her own notes. | **Study → choose a topic → Plain → Explain this topic.** |
+| <img src="studymate/public/studymate-assets/story-law-client-office.png" width="90" alt="Story Mode client office" /> | The theory still feels abstract, so she flips to **Story**. Now *she* is a junior lawyer advising a client whose ceiling collapsed. Each element of negligence becomes a question she has to answer for the client. | **Switch to Story → Explain this topic.** The same material is retold as a scenario. |
+| <img src="studymate/public/studymate-assets/matey/matey-thinking.png" width="90" alt="Matey thinking" /> | Ready to test herself, Ada starts a practice set and answers exam-style questions. The server marks her answers and saves the feedback. She nailed duty of care but missed **factual causation**. | **Practice → answer → Submit.** Grading happens on the server, and the feedback is saved. |
+| <img src="studymate/public/studymate-assets/story-law-courtroom.png" width="90" alt="Courtroom scenario" /> | She taps **Retry weak areas** and gets a targeted round on causation, this time framed as a courtroom argument. It clicks. | **Retry weak areas** focuses on what you missed. |
+| <img src="studymate/public/studymate-assets/matey/matey-celebrate.png" width="90" alt="Matey celebrating" /> | Session done. She exports a **revision PDF** with the explanations, her answers and the feedback, then shares it to her study group. Opening it again later doesn't use another session. | **Export revision PDF → Download / Share.** |
+| ⭐ | By Day 5 she has used her three Free sessions. She adds a second course (Contract Law), so she upgrades to **Pro**: five courses and 30 sessions a month, with no ads. Before the exam she buys a **ten-session top-up** for one last push. | **Pro & credits → Subscribe or Top up.** Purchases go through RevenueCat; the server verifies access. |
+
+> 🏫 *Her lecturer could also add the class through **Schools**, set "Negligence" as an assignment and see aggregate practice results, while a visible study timer tracks time in the app.*
+
+*Ada is an illustrative persona; the flow matches the features listed below.*
 
 ## 🔁 How It Works
 
