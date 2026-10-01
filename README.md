@@ -1,8 +1,16 @@
 # StudyMate Mobile
 
-Android implementation workspace for the RevenueCat Shipaton 2026 Next Gen track, prepared for development with Hoplite.
+StudyMate Mobile for RevenueCat Shipaton 2026: upload course material, learn in Plain or Story mode, practise, review feedback, and export a revision PDF.
 
-**Status:** a first Android client, course report PDF path, and RevenueCat purchase/restore path are implemented on the `codex/mobile-mvp` branch. The mobile TypeScript/Vite build passes. Native runtime, live AI, purchase and submission remain unverified; see [implementation status](docs/implementation-status.md).
+**Status:** authenticated study sessions, Free/Pro quotas, a credit ledger, Schools assignments/timers, saved grading and revision PDFs are implemented on `codex/mobile-mvp`. Backend tests, live API checks and one real AI study journey passed. Android purchase, ads and sharing remain unverified. The latest webhook null-field fix and topic-focused quiz update await backend deployment; see [implementation status](docs/implementation-status.md).
+
+## Hackathon browser preview
+
+The separate hackathon repository is being prepared as `adetorojeremiahfadesayo/StudyMate-Shipaton-2026`. Its GitHub Pages workflow builds the mobile client and uses the existing backend at `https://studymate-pro.up.railway.app`. Deployment results and the verified link will be recorded in the implementation status.
+
+Sign in with a StudyMate account to use the real backend. Judges can use the existing test account shared separately; its password is not included in this repository. Browser purchases are disabled; native RevenueCat billing requires Android. The website's separate `/demo` page contains sample material and does not prove billing or AI execution.
+
+The preview workflow accepts only public Supabase URL/anon key and backend URL through repository variables. Server credentials stay on the backend. See [GitHub preview setup](docs/github-preview.md).
 
 ## Start with Hoplite
 
@@ -23,7 +31,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Baseline checks: `npm run lint`, `npm test`, `npm run build`. They have not been run during repository preparation. The sample demo is not evidence of live service integration. See the existing [product context](studymate/CONTEXT.md) and [original README](docs/original-README.md).
+Backend checks: `npm run lint`, `npm test`, `npm run build`. Actual results and Windows worker settings are recorded in the implementation status. The sample demo is not evidence of live service integration. See the existing [product context](studymate/CONTEXT.md) and [original README](docs/original-README.md).
 
 The mobile client and generated Android project are in [mobile/](mobile/README.md). Follow its setup steps for local builds.
 
@@ -31,4 +39,4 @@ The mobile client and generated Android project are in [mobile/](mobile/README.m
 
 Imported from [adetorojeremiahfadesayo/StudyMate](https://github.com/adetorojeremiahfadesayo/StudyMate), source snapshot `5465815`, on September 21, 2026. This repository starts with a new commit history; the original history remains in the source repository. The upstream repository was not modified.
 
-This development repository is private. Before Next Gen submission, make it public, add an appropriate open-source license after confirming asset rights, and complete the release checklist in the plan. No license or submission readiness is implied by this preparation.
+The hackathon repository preserves this development history and the upstream attribution. Creating a separate repository does not imply that all work began during the event. Licensing, third-party asset rights, native runtime checks and final submission remain release checks; no submission readiness is implied.

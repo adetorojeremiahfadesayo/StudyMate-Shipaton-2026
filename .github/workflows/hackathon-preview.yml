@@ -1,0 +1,59 @@
+name: Hackathon browser preview
+
+on:
+  push:
+    branches: [codex/mobile-mvp]
+    paths:
+      - mobile/**
+      - .github/workflows/hackathon-preview.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hackathon-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.repository == 'adetorojeremiahfadesayo/StudyMate-Shipaton-2026'
+    runs-on: ubuntu-latest
+    env:
+      VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+      VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
+      VITE_ADS_ENABLED: 'false'
+      PAGES_BASE: /${{ github.event.repository.name }}/
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - run: node scripts/validate-preview-config.mjs
+      - run: npm ci
+      - run: npm test
+      - run: npm run build -- --base "$PAGES_BASE"
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: mobile/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish hackathon preview
+        id: deployment
+        uses: actions/deploy-pages@v4
