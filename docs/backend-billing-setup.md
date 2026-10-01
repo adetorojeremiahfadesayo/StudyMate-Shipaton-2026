@@ -1,18 +1,18 @@
 # StudyMate backend and RevenueCat setup
 
-Status (October 1): the existing Railway service has been updated and its authentication/billing API smoke checks passed. Ignored `mobile/.env` now uses its public Supabase configuration, existing API origin and RevenueCat public Test Store key. Android purchases remain unverified.
+Status (October 1): the existing Railway service now uses direct OpenAI. Live synthetic upload, learning preparation, explanation, free practice and PDF export passed; unpaid Pro access was denied. Ignored `mobile/.env` uses public Supabase configuration, the same API origin and RevenueCat public Test Store key. Android purchases remain unverified.
 
 ## 1. Use the existing StudyMate backend
 
-`studymate/` is already a Next.js API and website. The Android client in `mobile/` calls that API; it does not need a second server. If the website already has working signed-in courses, material processing, and live Azure responses, use that same Supabase project and backend deployment.
+`studymate/` is already a Next.js API and website. The Android client in `mobile/` calls that API and uses the same Supabase project and backend deployment.
 
 The deployed origin is `https://studymate-pro.up.railway.app/`. Deployment `906a94f0-7baf-44b8-bae6-ca32af8c2dce` updated that same service, with no new backend or database. `/`, `/demo`, `/login` and `/api/health` returned HTTP 200. Requests without authentication or with an invalid bearer token returned HTTP 401. An authorized test session could read the judge account's 18 owned courses; its password and course data were preserved. No readable wiki pages were found for that account, so these checks do not establish live AI generation or upload processing.
 
-For local work, copy `studymate/.env.example` to `studymate/.env.local`. Set the existing website's Supabase URL and public anon key, its **server-only** Supabase service key, Azure OpenAI endpoint/key/deployment, and `NEXT_PUBLIC_DEMO_MODE=false`. Add `REVENUECAT_SECRET_API_KEY` later in step 3. Optional Foundry IQ and Document Intelligence settings are needed only for their corresponding paths. The Supabase database must have the website's existing tables and this repository's migrations, and Storage must have the `materials` bucket. This repository's migrations add to an existing schema; they are not a complete fresh-database bootstrap.
+For local work, copy `studymate/.env.example` to `studymate/.env.local`. Set the existing website's Supabase URL and public anon key, its **server-only** Supabase service key and OpenAI API key, `STUDYMATE_AI_PROVIDER=openai`, `OPENAI_MODEL=gpt-5.4-mini`, and `NEXT_PUBLIC_DEMO_MODE=false`. Add `REVENUECAT_SECRET_API_KEY` as described in step 3. Optional Azure/Foundry IQ and Document Intelligence settings are needed only for their corresponding paths. The Supabase database must have the website's existing tables and this repository's migrations, and Storage must have the `materials` bucket. This repository's migrations add to an existing schema; they are not a complete fresh-database bootstrap.
 
 Run from `studymate/`: `npm ci`, then `npm run dev -- --hostname 0.0.0.0`. For a physical phone, use a reachable HTTPS deployment/tunnel as the API origin; a phone's `localhost` does not point at your computer. A hosted Next.js deployment must have the same server environment variables. The current upload route starts material processing after returning its HTTP response; confirm the job finishes on the selected host before relying on a serverless deployment.
 
-Copy `mobile/.env.example` to `mobile/.env`. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` to the **same public** Supabase values as the website, and set `VITE_API_BASE_URL` to the backend origin (no `/api` suffix). Never put the Supabase service key, Azure key or RevenueCat secret key in a `VITE_` variable.
+Copy `mobile/.env.example` to `mobile/.env`. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` to the **same public** Supabase values as the website, and set `VITE_API_BASE_URL` to the backend origin (no `/api` suffix). Never put the Supabase service key, OpenAI/Azure key or RevenueCat secret key in a `VITE_` variable.
 
 ## 2. Create the Test Store subscription
 
@@ -42,7 +42,7 @@ The six ad-policy tests pass, and Capacitor sync detects the plugin. Actual nati
 
 ## OpenAI provider
 
-The user selected direct OpenAI after the configured Azure hostname failed DNS resolution. Set **server-only** Railway variables `OPENAI_API_KEY`, `STUDYMATE_AI_PROVIDER=openai` and `OPENAI_MODEL=gpt-5.4-mini`. The user's key has passed a small Responses API call with a completed response. A live StudyMate course flow must be checked after deploying the provider change.
+The user selected direct OpenAI after the configured Azure hostname failed DNS resolution. Set **server-only** Railway variables `OPENAI_API_KEY`, `STUDYMATE_AI_PROVIDER=openai` and `OPENAI_MODEL=gpt-5.4-mini`. Deployment `ec27435c-742a-45bc-99c6-97637a9267c1` activated this provider on the existing service. Live synthetic text upload, learning preparation, explanation, three-question generation and PDF export passed; an unpaid five-question request returned 403. Android behavior remains unverified.
 
 `studymate/lib/openai.ts` uses the existing OpenAI SDK's Responses API with source instructions, bounded output and `store: false`. OpenAI model IDs are configured separately from legacy Azure deployment names; optional tier overrides are `STUDYMATE_OPENAI_MODEL_LIGHT`, `_STANDARD` and `_COMPLEX`. No fallback is configured by default. Selecting `azure` explicitly retains the legacy provider. Neither API keys nor generated student content are logged.
 
@@ -50,10 +50,19 @@ OpenAI mode retrieves saved course pages from Supabase without using the previou
 
 Official reference: [OpenAI JavaScript quickstart](https://developers.openai.com/api/docs/quickstart), [GPT-5.4 mini](https://developers.openai.com/api/docs/models/gpt-5.4-mini).
 
+### Legacy database upgrade
+
+The deployed database inherited an MCQ-only quiz table. The following additive migrations were applied manually in the existing project's SQL editor; keep them with this branch for review and future environments:
+
+- `studymate/supabase/migrations/20261001_upgrade_legacy_quiz_schema.sql`: adds practice fields, creates the absent attempts table, enables RLS and installs course ownership policies. `CREATE TABLE IF NOT EXISTS` in the older migration alone did not upgrade the existing table. Live REST schema and subsequent question generation passed.
+- `studymate/supabase/migrations/20261001_add_legacy_course_readiness.sql`: adds the missing course readiness field. Existing course values are not overwritten; null lets the report calculate readiness from saved activity. Subsequent PDF export returned 200 and included the fixture course and source filename.
+
+These migrations do not implement mobile answer persistence, secure grading, monthly quotas or school seats. Temporary synthetic test courses/files were removed. The existing judge account still owns 18 courses and its password was not changed.
+
 ## 4. Verify end to end
 
 1. Start the backend with demo mode off. Sign in to the mobile client using the same Supabase account as the website. Create a course. Confirm it appears in the database and website.
-2. Upload a small text PDF or `.txt` file. Wait for processing, then get a **live** explanation. If processing remains queued, investigate the job worker/host before demonstrating the feature.
+2. Upload a small text PDF or `.txt` file. Wait for processing, select **Prepare learning**, then get a **live** explanation and three questions. Export the report. If processing remains queued, investigate the job worker/host before demonstrating the feature.
 3. In an Android debug build, open Pro. Confirm a monthly package and formatted price appear. Purchase through the Test Store success dialog.
 4. Confirm RevenueCat CustomerInfo shows `studymate_pro`, then request five questions. Confirm a non-paying second account gets HTTP 403 for five questions while three questions still work. Test restore, failed purchase, cancellation, account switching, and entitlement expiry.
 5. Test a real store sandbox separately before public store release. Test Store transactions are sandbox data, not revenue.

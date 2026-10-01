@@ -1,12 +1,12 @@
 # Implementation status
 
-September 30, 2026: local mobile implementation started from the clean `14b0c03` source snapshot on branch `codex/mobile-mvp`. This machine has Node 24 but no `java`, `adb`, Gradle or Android SDK commands on PATH. No service credentials were found in the process environment. Native runtime, AI and RevenueCat purchases remain unverified.
+Current status, October 1, 2026: development is on `codex/mobile-mvp`. The existing Railway backend now uses direct OpenAI and configured RevenueCat Test Store billing. Live synthetic text upload, learning preparation, explanation, free practice and PDF export passed; unpaid Pro access was denied. The judge account retains its 18 courses. Android runtime and purchases remain unverified because JDK/Android SDK/device access are unavailable. The dated entries below retain historical results and blockers.
 
 | Milestone | Status | Next evidence |
 |---|---|---|
-| M0 baseline | In progress | Run existing Next.js lint, tests and build after dependency install |
-| M1 Android spike | Implemented locally, not native tested | Bundle/sync Android, authenticate, real backend response, Test Store purchase |
-| M2 learning | Pending | Import new material and verify sources |
+| M0 baseline | Locally tested | 33 backend tests, lint and production build passed |
+| M1 Android spike | Partial; backend live tested | Native install, authentication and Test Store purchase on Android |
+| M2 learning | Partial; synthetic text path live tested | Scanned PDF OCR and complete client/device flow |
 | M3 practice | Partial | Self-check and PDF share code added; persist attempts and verify on Android |
 | M4 billing | Partial | Longer practice set checks RevenueCat server entitlement; quota and webhook remain pending |
 | M5 QA | Pending | Student and actual Android observations |
@@ -74,3 +74,12 @@ For every update record date, commit, behavior, checks and actual output, live/t
 - Added direct OpenAI routing with separate model IDs, bounded output, no automatic cross-provider fallback, `store: false`, incomplete-response rejection and safe error metadata. Kept explicitly selected Azure routing available. Six provider tests passed and lint passed.
 - Added mobile **Prepare learning**, bearer support for that endpoint, truthful preparation failure, an empty-source explanation guard, and support for string source citations in mobile. Direct OpenAI uses saved course pages instead of the former Foundry endpoint. Production context cannot silently use the sample demo course.
 - All 33 backend tests passed with one worker on the completed retry; lint and the Next.js production build passed. A concurrent earlier test run crashed on Windows (`0xC0000005`); retrying after the build completed passed. Mobile TypeScript/Vite build and Capacitor sync passed. A scan found no configured server secrets in the mobile bundle or Git diff. Native runtime and live upload-to-learning verification remain pending.
+
+### Deployment and live course verification
+
+- Commit `0d8bde6` was deployed to the existing Railway service. Deployment `ec27435c-742a-45bc-99c6-97637a9267c1` reported SUCCESS; its build logs confirmed all 33 backend tests, lint and the production build passed.
+- A bearer-authenticated synthetic course was created (200), text uploaded (200) and processed to `complete` / `indexed=true`. **Prepare learning** returned 200 with six wiki pages; all six stored references named the uploaded fixture. The explanation returned 200, 2,597 characters and five source references, and mentioned the four concepts in the fixture. This establishes a live text course check, not a general accuracy assessment or native app result.
+- The first practice check exposed an inherited MCQ-only `quiz_questions` table and absent `quiz_attempts`. Applied `20261001_upgrade_legacy_quiz_schema.sql` through the signed-in Supabase SQL editor; it returned success. REST schema verification confirmed the added fields and attempts table. Existing rows were preserved. The subsequent free set returned 200 / three questions; an unpaid five-question request returned 403.
+- PDF export initially returned 500 because `courses.readiness_score` was missing. Applied `20261001_add_legacy_course_readiness.sql`, which adds a nullable field without overwriting course data; SQL editor reported success. A final complete synthetic flow returned 200 for upload, preparation (six pages), explanation (1,833 characters / four references), three-question practice and PDF export. The PDF was 14,588 bytes with a valid `%PDF` header and contained the temporary course name and uploaded fixture filename. This checks the backend export response and basic contents, not native opening/sharing or persisted mobile answers.
+- Inspected all nine live quiz policies: the eight migration policies restrict access to the course owner, and the retained legacy `Users see own quiz_questions` policy also checks `courses.user_id = auth.uid()`. No unrestricted policy was found on these two tables. A final account check confirmed the judge account remains confirmed and owns 18 courses.
+- Synthetic files and courses were removed after each check. No existing judge password or study content was changed. Quotas, secure grading, persisted mobile answers, webhooks, school seats/timer and top-ups remain unfinished. No real store purchase or native ad/PDF-share result is claimed.
