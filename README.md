@@ -4,6 +4,8 @@ StudyMate Mobile for RevenueCat Shipaton 2026: upload course material, learn in 
 
 **Status:** authenticated study sessions, Free/Pro quotas, a credit ledger, Schools assignments/timers, saved grading and revision PDFs are implemented on `codex/mobile-mvp`. Backend tests, live API checks and one real AI study journey passed. The latest backend fixes are deployed from GitHub to the existing Railway service. Android purchase, ads and sharing remain unverified; see [implementation status](docs/implementation-status.md).
 
+**Next Gen submission:** see the [remaining checklist](docs/submission-checklist.md). The [Android Test Store APK build](https://github.com/adetorojeremiahfadesayo/StudyMate-Shipaton-2026/actions/runs/36898273019) provides an installable test artifact; native testing is still required.
+
 ## Hackathon browser preview
 
 **[Open the hackathon browser preview](https://adetorojeremiahfadesayo.github.io/StudyMate-Shipaton-2026/)** · **[Hackathon source repository](https://github.com/adetorojeremiahfadesayo/StudyMate-Shipaton-2026)**
