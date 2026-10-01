@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   android:
-    if: github.repository == 'adetorojeremiahfadesayo/StudyMate-Shipaton-2026'
+    if: github.repository == 'adetorojeremiahfadesayo/Studymate-with-Matey'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:

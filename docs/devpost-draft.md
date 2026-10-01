@@ -58,9 +58,9 @@ React, TypeScript, Vite, Capacitor, Android, RevenueCat, Next.js, Supabase, Post
 
 ## Links
 
-- Source: https://github.com/adetorojeremiahfadesayo/StudyMate-Shipaton-2026
-- Browser preview: https://adetorojeremiahfadesayo.github.io/StudyMate-Shipaton-2026/
-- Android APK build with the matching icon: https://github.com/adetorojeremiahfadesayo/StudyMate-Shipaton-2026/actions/runs/36902184856
+- Source: https://github.com/adetorojeremiahfadesayo/Studymate-with-Matey
+- Browser preview: https://adetorojeremiahfadesayo.github.io/Studymate-with-Matey/
+- Android APK build with the matching icon: https://github.com/adetorojeremiahfadesayo/Studymate-with-Matey/actions/runs/36902184856
 - Backend/web foundation: https://studymate-pro.up.railway.app/
 
 ## Judge testing notes

@@ -6,14 +6,14 @@ Checked October 1, 2026 against the official [Devpost overview](https://revenuec
 
 ## Ready
 
-- Public source repository: https://github.com/adetorojeremiahfadesayo/StudyMate-Shipaton-2026
+- Public source repository: https://github.com/adetorojeremiahfadesayo/Studymate-with-Matey
 - Owner-approved MIT license and preserved upstream attribution/history.
 - Original 1024 × 1024 app icon and three 1179 × 2556 browser-preview screenshots prepared in `output/playwright/submission/`; upload and form attachment are not yet verified.
-- Live browser preview: https://adetorojeremiahfadesayo.github.io/StudyMate-Shipaton-2026/
+- Live browser preview: https://adetorojeremiahfadesayo.github.io/Studymate-with-Matey/
 - Existing Railway backend deployed from the hackathon GitHub branch, including final quota/credit/Schools and webhook fixes.
 - RevenueCat Pro Test Store product, ten-session consumable and offerings configured. Live dashboard TEST webhook returned 200 without granting credits.
 - Existing judge account preserved; share its credentials privately in the appropriate judge-access field, never in the repository or video.
-- Browser/API checks recorded in `implementation-status.md`. The Android Test Store APK compiled and uploaded successfully in [build 36898273019](https://github.com/adetorojeremiahfadesayo/StudyMate-Shipaton-2026/actions/runs/36898273019), artifact `StudyMate-Android-TestStore`. Build success does not establish native runtime.
+- Browser/API checks recorded in `implementation-status.md`. The Android Test Store APK compiled and uploaded successfully in [build 36898273019](https://github.com/adetorojeremiahfadesayo/Studymate-with-Matey/actions/runs/36898273019), artifact `StudyMate-Android-TestStore`. Build success does not establish native runtime.
 
 ## Still to complete
 
