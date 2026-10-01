@@ -31,3 +31,12 @@ export const MODEL_MAP: Record<ModelTier, ModelRouteConfig> = {
     maxTokens: 6000,
   },
 };
+
+// Separate API model IDs from Azure deployment names.
+export const OPENAI_MODEL_MAP: Record<ModelTier, ModelRouteConfig> = Object.fromEntries(
+  (["light", "standard", "complex"] as const).map(tier => [tier, {
+    ...MODEL_MAP[tier],
+    primary: readModelEnv(`STUDYMATE_OPENAI_MODEL_${tier.toUpperCase()}`, readModelEnv("OPENAI_MODEL", "gpt-5.4-mini")),
+    fallback: process.env.STUDYMATE_OPENAI_MODEL_FALLBACK?.trim() || null,
+  }]),
+) as Record<ModelTier, ModelRouteConfig>;

@@ -9,7 +9,7 @@ export const runtime = "nodejs";
 
 const EXPLAINER_SYSTEM_PROMPT = [
   "You are StudyMate's Explainer.",
-  "Explain course topics using only the Foundry IQ retrieved context and notes.",
+  "Explain course topics using only the supplied course context and notes.",
   "Return only markdown content.",
   "Be clear, student-friendly, and exam-focused.",
   "If the material is insufficient, say what is missing before giving a cautious explanation.",
@@ -68,7 +68,7 @@ function buildExplainerPrompt({
     "",
     `Student request: ${topic}`,
     "",
-    `Knowledge layer: ${usedFoundryIq ? "Microsoft Foundry IQ retrieval" : "Local wiki fallback for demo/dev"}`,
+    `Knowledge layer: ${usedFoundryIq ? "Microsoft Foundry IQ retrieval" : "Saved course material"}`,
     "",
     "Task:",
     "Explain the requested topic using the retrieved knowledge context below.",
@@ -151,6 +151,9 @@ export async function POST(request: NextRequest) {
       wikiPages: wikiResponse.error ? [] : wikiResponse.data ?? [],
       topK: 5,
     });
+    if (foundryContext.pages.length === 0 && !notesResponse.data?.content?.trim()) {
+      return NextResponse.json({ error: "Your material is not ready for learning. Prepare it first." }, { status: 409 });
+    }
     const explanation = await getChatCompletionText(
       buildExplainerPrompt({
         courseName: courseResponse.data.name,

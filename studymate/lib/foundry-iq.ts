@@ -162,11 +162,14 @@ async function retrieveFromFoundryIq({
 
 export async function retrieveStudyContext(input: RetrieveStudyContextInput): Promise<FoundryIqApiResult> {
   const wikiPages =
+    process.env.NODE_ENV !== "production" && process.env.NEXT_PUBLIC_DEMO_MODE === "true" &&
     input.courseId === DEMO_COURSE.id && input.wikiPages.length === 0
       ? DEMO_WIKI_PAGES
       : input.wikiPages;
 
-  const foundryResult = await retrieveFromFoundryIq({ ...input, wikiPages });
+  const usesOpenAI = process.env.STUDYMATE_AI_PROVIDER === "openai" ||
+    (!process.env.STUDYMATE_AI_PROVIDER && Boolean(process.env.OPENAI_API_KEY?.trim()));
+  const foundryResult = usesOpenAI ? null : await retrieveFromFoundryIq({ ...input, wikiPages });
   if (foundryResult) {
     return foundryResult;
   }

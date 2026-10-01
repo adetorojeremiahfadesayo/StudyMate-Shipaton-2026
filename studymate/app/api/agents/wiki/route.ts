@@ -43,7 +43,7 @@ function normalizeWikiResponse(response: unknown): WikiPageInput[] {
 
 export async function POST(request: NextRequest) {
   try {
-    const authenticated = await getAuthenticatedRouteSupabase();
+    const authenticated = await getAuthenticatedRouteSupabase(request);
     if (!authenticated) {
       return unauthorizedResponse();
     }
@@ -107,9 +107,8 @@ export async function POST(request: NextRequest) {
 
     if (wikiPages.length === 0) {
       return NextResponse.json({
-        pagesCreated: 0,
-        message: "No wiki pages were generated from the current materials.",
-      });
+        error: "Could not prepare learning from this material. Please retry.",
+      }, { status: 503 });
     }
 
     const { data: existingPages, error: existingPagesError } = await supabaseAdmin

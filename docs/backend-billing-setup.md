@@ -1,6 +1,6 @@
 # StudyMate backend and RevenueCat setup
 
-Status (October 1): the existing Railway service has been updated and its authentication/API smoke checks passed. Ignored `mobile/.env` now uses its public Supabase configuration and the existing API origin. Android purchases and live AI generation remain unverified.
+Status (October 1): the existing Railway service has been updated and its authentication/billing API smoke checks passed. Ignored `mobile/.env` now uses its public Supabase configuration, existing API origin and RevenueCat public Test Store key. Android purchases remain unverified.
 
 ## 1. Use the existing StudyMate backend
 
@@ -28,6 +28,8 @@ In RevenueCat **Project Settings → API keys**, obtain a **secret API key with 
 
 The app supplies the signed-in Supabase user UUID to RevenueCat as its App User ID. Use the same account for sign-in, purchase, and server verification. The backend denies Pro if the RevenueCat key is missing or the lookup fails. `/api/billing/access` reports `unknown` in that situation and the mobile client skips ads.
 
+Deployment `b7ff16e3-0687-4569-98d5-dc49fb9a2c2a` activated the billing configuration and sandbox restrictions. Live health reports `billingConfigured=true`; the existing judge account's access is `free` before purchase. Its 18 owned courses remain readable. The preceding upload failed because the service root is `/studymate`; upload the repository root when deploying this service.
+
 The public Test Store SDK key is now saved in ignored `mobile/.env`. A project REST v1 secret labeled **StudyMate Railway Server v1** is configured in the existing Railway service. No secret values are committed or copied into the client. Server environment `REVENUECAT_SANDBOX_USER_IDS` allows only explicitly listed Supabase account UUIDs to unlock sandbox paid actions; the existing judge account is listed. All other accounts require a verified production subscription. Missing transaction/environment information yields `unknown`; refunds deny access; an active provider grace period preserves access.
 
 The API returned the current offering `default`, package `$rc_monthly`, and product `studymate_pro_monthly_test_v2`. Its associated entitlement is `studymate_pro` (REST ID `entlb5f6912b5e`). A server subscriber lookup returned a valid profile with no entitlements; **no purchase or promotional grant was made**. These configuration checks do not prove Android purchase/restore behavior.
@@ -37,6 +39,16 @@ The API returned the current offering `default`, package `$rc_monthly`, and prod
 The Android client includes the AdMob plugin with Google test app/ad-unit IDs. With `VITE_ADS_ENABLED=true`, an ad is eligible after every second completed practice set, with at least ten minutes between displays. It checks server billing access before loading and again before display. Paid Pro and `studymate_school` entitlements, unknown billing state, denied consent, navigation away and SDK errors skip the ad. The app exposes an Ad privacy button for the native consent form.
 
 The six ad-policy tests pass, and Capacitor sync detects the plugin. Actual native consent, ad display/dismissal and purchase-based suppression still need device testing. No production ad revenue is configured. Production requires the publisher's AdMob app ID, ad-unit ID and consent-message setup; the present implementation deliberately uses test IDs. Schools seat allocation is still a future feature.
+
+## OpenAI provider
+
+The user selected direct OpenAI after the configured Azure hostname failed DNS resolution. Set **server-only** Railway variables `OPENAI_API_KEY`, `STUDYMATE_AI_PROVIDER=openai` and `OPENAI_MODEL=gpt-5.4-mini`. The user's key has passed a small Responses API call with a completed response. A live StudyMate course flow must be checked after deploying the provider change.
+
+`studymate/lib/openai.ts` uses the existing OpenAI SDK's Responses API with source instructions, bounded output and `store: false`. OpenAI model IDs are configured separately from legacy Azure deployment names; optional tier overrides are `STUDYMATE_OPENAI_MODEL_LIGHT`, `_STANDARD` and `_COMPLEX`. No fallback is configured by default. Selecting `azure` explicitly retains the legacy provider. Neither API keys nor generated student content are logged.
+
+OpenAI mode retrieves saved course pages from Supabase without using the previous Foundry endpoint. After uploading and waiting for extraction, select **Prepare learning**, then enter a topic and explain it. Failed preparation returns an error; missing production material cannot be replaced with the sample course. Scanned PDFs still require a working OCR provider; direct OpenAI text generation does not configure OCR.
+
+Official reference: [OpenAI JavaScript quickstart](https://developers.openai.com/api/docs/quickstart), [GPT-5.4 mini](https://developers.openai.com/api/docs/models/gpt-5.4-mini).
 
 ## 4. Verify end to end
 

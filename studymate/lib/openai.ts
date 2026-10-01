@@ -1,5 +1,5 @@
-import { AzureOpenAI } from "openai";
-import { MODEL_MAP, type ModelTier } from "@/lib/model-map";
+import OpenAI, { AzureOpenAI } from "openai";
+import { MODEL_MAP, OPENAI_MODEL_MAP, type ModelTier } from "@/lib/model-map";
 
 export type ChatCompletionOptions = {
   modelTier?: ModelTier;
@@ -15,6 +15,27 @@ type ModelAttempt = {
 };
 
 let openaiClient: AzureOpenAI | null = null;
+let directClient: OpenAI | null = null;
+
+function getProvider(): "openai" | "azure" {
+  const provider = process.env.STUDYMATE_AI_PROVIDER?.trim() || (process.env.OPENAI_API_KEY?.trim() ? "openai" : "azure");
+  if (provider !== "openai" && provider !== "azure") throw new Error("Invalid STUDYMATE_AI_PROVIDER.");
+  return provider;
+}
+
+function getDirectClient() {
+  if (directClient) return directClient;
+  const apiKey = process.env.OPENAI_API_KEY?.trim();
+  if (!apiKey) throw new Error("Missing OPENAI_API_KEY.");
+  directClient = new OpenAI({ apiKey, timeout: 60_000, maxRetries: 0 });
+  return directClient;
+}
+
+function safeError(error: unknown) {
+  if (!error || typeof error !== "object") return { name: "UnknownError" };
+  const details = error as { name?: string; status?: number; code?: string };
+  return { name: details.name, status: details.status, code: details.code };
+}
 
 function getOpenAIClient() {
   if (openaiClient) {
@@ -83,8 +104,8 @@ function getRequestLabel(requestName?: string) {
   return requestName ? `:${requestName}` : "";
 }
 
-function buildAttempts(modelTier: ModelTier): ModelAttempt[] {
-  const config = MODEL_MAP[modelTier];
+function buildAttempts(modelTier: ModelTier, provider: "openai" | "azure"): ModelAttempt[] {
+  const config = (provider === "openai" ? OPENAI_MODEL_MAP : MODEL_MAP)[modelTier];
   const attempts: ModelAttempt[] = [
     {
       deployment: config.primary,
@@ -158,18 +179,34 @@ async function callAzureChatCompletion(
   return flattenModelContent(completion.choices[0]?.message?.content);
 }
 
+async function callDirectCompletion(prompt: string, systemPrompt: string, model: string, tier: ModelTier, options?: ChatCompletionOptions) {
+  console.info(`[AI${getRequestLabel(options?.requestName)}] OpenAI model ${model} (${tier})`);
+  const response = await getDirectClient().responses.create({
+    model,
+    instructions: systemPrompt,
+    input: prompt,
+    max_output_tokens: options?.maxTokens ?? OPENAI_MODEL_MAP[tier].maxTokens,
+    store: false,
+  });
+  if (response.status !== "completed") throw new Error("AI response did not complete.");
+  return response.output_text?.trim() || "";
+}
+
 export async function getChatCompletionText(
   prompt: string,
   systemPrompt: string,
   options?: ChatCompletionOptions,
 ): Promise<string | null> {
   const modelTier = options?.modelTier ?? "standard";
-  const attempts = buildAttempts(modelTier);
+  const provider = getProvider();
+  const attempts = buildAttempts(modelTier, provider);
   let lastError: unknown = null;
 
   for (const attempt of attempts) {
     try {
-      const content = await callAzureChatCompletion(
+      const content = provider === "openai"
+        ? await callDirectCompletion(prompt, systemPrompt, attempt.modelName, modelTier, options)
+        : await callAzureChatCompletion(
         prompt,
         systemPrompt,
         attempt.deployment,
@@ -187,13 +224,13 @@ export async function getChatCompletionText(
       lastError = error;
       const requestLabel = getRequestLabel(options?.requestName);
       console.warn(
-        `[AI${requestLabel}] ${attempt.modelName} (${attempt.stage}) failed. Falling back.`,
-        error,
+        `[AI${requestLabel}] ${attempt.modelName} (${attempt.stage}) failed.`,
+        safeError(error),
       );
     }
   }
 
-  console.error(`[AI${getRequestLabel(options?.requestName)}] All model attempts failed.`, lastError);
+  console.error(`[AI${getRequestLabel(options?.requestName)}] All model attempts failed.`, safeError(lastError));
   return null;
 }
 
@@ -209,7 +246,7 @@ export async function getChatCompletion<T = unknown>(
 
   const parsed = parseJsonSafely<T>(content);
   if (!parsed) {
-    console.error("Failed to parse OpenAI JSON response:", content);
+    console.error("Failed to parse AI JSON response.", { characters: content.length });
   }
 
   return parsed;
