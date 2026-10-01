@@ -25,3 +25,10 @@ For every update record date, commit, behavior, checks and actual output, live/t
 - `npx cap sync android` completed and detected the RevenueCat plugin. Backend `npm ci` did not finish before the deadline check and was stopped; backend lint, tests and build are unverified. The installed Next.js documentation was unavailable during this edit.
 - October 1 follow-up: enabled bearer-authenticated report generation from mobile, with PDF download in browser and native file/share handling through Capacitor Filesystem and Share. Mobile TypeScript/Vite build passed after this addition. Native PDF opening/sharing is still unverified because Android tooling is absent.
 - Capacitor sync completed with Filesystem, Share and RevenueCat plugins detected. A direct Node check passed for active Pro entitlement and provider-failure denial. Backend dependency installation remained incomplete, so the Vitest suite, lint and Next.js build are still unverified.
+
+## October 1 testing and Shipaton refresh
+
+- `mobile/npm run build` passed again. A local Vite browser launch displayed the expected setup screen; browser console showed only a missing favicon request. This confirms the client boots without keys, not authenticated functionality or native behavior.
+- No `mobile/.env` or `studymate/.env.local` exists in this checkout, and no Android SDK/JDK was found on PATH. Authentication, live AI, PDF sharing on Android and RevenueCat purchase/restore remain untested.
+- Changed Android `launchMode` from Capacitor's generated `singleTask` to `singleTop` per RevenueCat's Capacitor instructions so external purchase verification does not cancel the flow.
+- Devpost announced a 12-hour extension to October 1, 12:00 PDT / 20:00 WAT. The rules page still contains the prior cutoff. The event workspace records both sources and the current Next Gen submission requirements.
