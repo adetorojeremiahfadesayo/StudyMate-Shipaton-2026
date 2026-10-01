@@ -16,7 +16,7 @@ Copy `mobile/.env.example` to `mobile/.env`. Set `VITE_SUPABASE_URL` and `VITE_S
 
 ## 2. Create the Test Store subscription
 
-In the RevenueCat dashboard, create/open the StudyMate project. Under **Apps and providers**, use the Test Store (create one under Test configuration if absent) and copy its `test_` public SDK key. Under **Product catalog → Products**, create one **Test Store** monthly subscription, with a descriptive ID such as `studymate_pro_monthly_test_v1` and a provisional test price. Test Store price and duration cannot be edited after creation; make a new product if these change.
+The StudyMate RevenueCat project (`da34e8e9`) now has a Test Store (`app056bc4aef7`). Its configured monthly product is `studymate_pro_monthly_test_v2` (REST ID `prode533e97e6d`), USD **5.99**, no free trial. The starter `v1` product used RevenueCat's USD 9.99 default; it is retained for history and is no longer the product in the offering. Test Store price and duration cannot be edited after creation.
 
 Under **Product catalog → Entitlements**, create identifier **`studymate_pro`** and attach the monthly product. Under **Product catalog → Offerings**, create or open the default offering, add a **monthly** package and attach that product. Mark the offering as default if it is not already. The mobile code fetches the current offering's first available package and displays the package's localized `priceString`. Keep just this one package until the UI explicitly supports a choice of plans.
 
@@ -26,7 +26,11 @@ Put the `test_` public SDK key in `mobile/.env` as `VITE_REVENUECAT_PUBLIC_SDK_K
 
 In RevenueCat **Project Settings → API keys**, obtain a **secret API key with REST API v1 access** for this project. Put it only in `studymate/.env.local` (and the backend host's secret environment settings) as `REVENUECAT_SECRET_API_KEY`. Do not confuse it with the Test Store public SDK key, an Android public key, or a REST API v2 secret. `studymate/lib/revenuecat-access.ts` uses REST v1 `GET /subscribers/{app_user_id}` and checks the active `studymate_pro` entitlement.
 
-The app supplies the signed-in Supabase user UUID to RevenueCat as its App User ID. Use the same account for sign-in, purchase, and server verification. The backend denies Pro if the RevenueCat key is missing or the lookup fails. `/api/billing/access` reports `unknown` in that situation and the mobile client skips ads. Railway currently lacks this secret key, and the mobile public SDK key is still blank.
+The app supplies the signed-in Supabase user UUID to RevenueCat as its App User ID. Use the same account for sign-in, purchase, and server verification. The backend denies Pro if the RevenueCat key is missing or the lookup fails. `/api/billing/access` reports `unknown` in that situation and the mobile client skips ads.
+
+The public Test Store SDK key is now saved in ignored `mobile/.env`. A project REST v1 secret labeled **StudyMate Railway Server v1** is configured in the existing Railway service. No secret values are committed or copied into the client. Server environment `REVENUECAT_SANDBOX_USER_IDS` allows only explicitly listed Supabase account UUIDs to unlock sandbox paid actions; the existing judge account is listed. All other accounts require a verified production subscription. Missing transaction/environment information yields `unknown`; refunds deny access; an active provider grace period preserves access.
+
+The API returned the current offering `default`, package `$rc_monthly`, and product `studymate_pro_monthly_test_v2`. Its associated entitlement is `studymate_pro` (REST ID `entlb5f6912b5e`). A server subscriber lookup returned a valid profile with no entitlements; **no purchase or promotional grant was made**. These configuration checks do not prove Android purchase/restore behavior.
 
 ## Free-tier ads
 
