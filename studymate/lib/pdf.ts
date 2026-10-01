@@ -300,6 +300,20 @@ function renderQuizAttempts(doc: jsPDF, attempts: QuizAttempt[], startY: number)
       { fontSize: 10.0 },
     );
     cursorY += 2;
+    if (attempt.feedback) cursorY = renderMarkdown(doc, attempt.feedback, cursorY);
+    for (const raw of attempt.questions_snapshot || []) {
+      const q = raw;
+      const answer = (attempt.answers_snapshot || []).find(rawAnswer => (rawAnswer as Record<string, unknown>).questionId === q.id) as Record<string, unknown> | undefined;
+      cursorY = writeParagraph(doc, String(q.question || ''), 16, cursorY, doc.internal.pageSize.getWidth() - 32, { bold: true });
+      if (q.source_material) cursorY = writeParagraph(doc, `Source: ${q.source_material}`, 16, cursorY, doc.internal.pageSize.getWidth() - 32);
+      if (answer) {
+        cursorY = writeParagraph(doc, `Your answer: ${answer.answer || answer.studentAnswer || answer.selectedAnswer || ''}`, 16, cursorY, doc.internal.pageSize.getWidth() - 32);
+        if (answer.feedback) cursorY = renderMarkdown(doc, String(answer.feedback), cursorY);
+        const reference = answer.referenceAnswer || q.model_answer || q.correct_answer;
+        if (reference) cursorY = writeParagraph(doc, `Reference answer: ${reference}`, 16, cursorY, doc.internal.pageSize.getWidth() - 32);
+      }
+      cursorY += 4;
+    }
   });
 
   return cursorY;

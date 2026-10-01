@@ -99,15 +99,27 @@ export async function generateQuizQuestions({
   quizType,
   questionCount,
   educationLevel,
+  quizSessionId: suppliedSessionId,
+  focus,
+  topic,
 }: {
   courseId: string;
   quizType: string;
   questionCount: number;
   educationLevel?: EducationLevel;
+  quizSessionId?: string;
+  focus?: string;
+  topic?: string;
 }) {
   const normalizedQuizType = normalizeQuizType(quizType);
   const { course, wikiPages } = await fetchCourseAndWiki(courseId);
-  const quizSessionId = randomUUID();
+  const quizSessionId = suppliedSessionId || randomUUID();
+  if (suppliedSessionId) {
+    const existing = await supabaseAdmin.from('quiz_questions').select('*').eq('course_id', courseId).eq('quiz_session_id', suppliedSessionId);
+    if (existing.error) throw new Error(existing.error.message);
+    if (existing.data?.length) return { course, quizSessionId, questions: existing.data as QuizQuestion[] };
+  }
+  if (!wikiPages.length) throw new Error('Prepare your material before practising.');
 
   const rawResponse = await getChatCompletion<unknown>(
     buildQuizGenerationPrompt({
@@ -117,7 +129,7 @@ export async function generateQuizQuestions({
       questionCount,
       educationLevel,
       wikiPages,
-    }),
+    }) + (topic ? '\nKeep every question focused on this study-session topic, using only the supplied course material:\n' + topic.slice(0, 300) : '') + (focus ? '\nPrioritize a targeted retry of these observed gaps:\n' + focus.slice(0, 2000) : ''),
     QUIZ_GENERATION_SYSTEM_PROMPT,
     { modelTier: "complex", requestName: "quiz-generation" },
   );
@@ -135,6 +147,7 @@ export async function generateQuizQuestions({
 
   const limitedQuestions = parsedQuestions.slice(0, questionCount);
   const payload = limitedQuestions.map((question) => ({
+    id: randomUUID(),
     course_id: courseId,
     quiz_session_id: quizSessionId,
     type: question.type,
@@ -157,9 +170,9 @@ export async function generateQuizQuestions({
   return {
     course,
     quizSessionId,
-    questions: limitedQuestions.map((question) => ({
+    questions: limitedQuestions.map((question, index) => ({
       ...question,
-      id: randomUUID(),
+      id: payload[index].id,
       course_id: courseId,
       quiz_session_id: quizSessionId,
       source_material: question.source_material ?? null,
@@ -241,6 +254,7 @@ export async function saveQuizAttempt({
   keyPointsMissed,
   questionsSnapshot,
   answersSnapshot,
+  serverVerified = false,
 }: {
   courseId: string;
   quizSessionId: string;
@@ -257,6 +271,7 @@ export async function saveQuizAttempt({
   keyPointsMissed?: string[];
   questionsSnapshot?: QuizQuestion[];
   answersSnapshot?: Array<Record<string, unknown>>;
+  serverVerified?: boolean;
 }) {
   const attemptPayload = {
     course_id: courseId,
@@ -274,6 +289,7 @@ export async function saveQuizAttempt({
     key_points_missed: keyPointsMissed ?? [],
     questions_snapshot: questionsSnapshot ?? [],
     answers_snapshot: answersSnapshot ?? [],
+    server_verified: serverVerified,
   };
 
   const { data, error } = await supabaseAdmin

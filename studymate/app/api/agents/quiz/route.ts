@@ -1,12 +1,14 @@
+import { withStudyQuota } from "@/lib/metered-route";
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedRouteSupabase, unauthorizedResponse } from "@/lib/route-helpers";
 import { generateQuizQuestions } from "@/lib/quiz-agent";
 import { normalizeEducationLevel } from "@/lib/learning-profile";
+import { meteringEnabled } from "@/lib/study-usage";
 import { hasRevenueCatPro } from "@/lib/revenuecat-access";
 
 export const runtime = "nodejs";
 
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
   try {
     const authenticated = await getAuthenticatedRouteSupabase(request);
     if (!authenticated) {
@@ -18,6 +20,8 @@ export async function POST(request: NextRequest) {
       courseId?: string;
       quizType?: string;
       questionCount?: number;
+      studySessionId?: string;
+      studyTopic?: string;
     };
 
     if (!body.courseId || !body.quizType || typeof body.questionCount !== "number") {
@@ -27,7 +31,7 @@ export async function POST(request: NextRequest) {
     if (!Number.isInteger(body.questionCount) || body.questionCount < 1 || body.questionCount > 5) {
       return NextResponse.json({ error: "Question count must be between 1 and 5." }, { status: 400 });
     }
-    if (body.questionCount > 3 && !(await hasRevenueCatPro(user.id))) {
+    if (!meteringEnabled() && body.questionCount > 3 && !(await hasRevenueCatPro(user.id))) {
       return NextResponse.json({ error: "StudyMate Pro is required for a five-question set.", code: "PRO_REQUIRED" }, { status: 403 });
     }
 
@@ -51,7 +55,9 @@ export async function POST(request: NextRequest) {
       courseId: body.courseId,
       quizType: body.quizType,
       questionCount: body.questionCount,
+      quizSessionId: body.studySessionId,
       educationLevel,
+      topic: meteringEnabled() ? body.studyTopic : undefined,
     });
 
     return NextResponse.json({
@@ -63,3 +69,5 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+export const POST = withStudyQuota(handlePost, "quiz");

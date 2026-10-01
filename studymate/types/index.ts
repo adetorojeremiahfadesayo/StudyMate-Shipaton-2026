@@ -156,3 +156,6 @@ export interface WikiPage {
   source_material?: string | null;
   created_at: string;
 }
+export type SchoolLicense = { id: string; name: string; status: 'pilot' | 'licensed' | 'suspended'; expires_at: string; seat_limit: number; monthly_pool: number };
+export type StudyPlan = { tier: 'free' | 'pro' | 'school'; courseLimit: number; monthlySessions: number; access: 'free' | 'paid' | 'unknown'; school: SchoolLicense | null };
+export type StudySession = { id: string; user_id: string; course_id: string; topic: string; plan: 'free' | 'pro' | 'school'; school_id: string | null; assignment_id: string | null; source: 'included' | 'credit' | 'school'; status: 'reserved' | 'active' | 'completed' | 'released'; expires_at: string; request_key: string; period: string };

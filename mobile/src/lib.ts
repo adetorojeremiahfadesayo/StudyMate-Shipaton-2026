@@ -11,13 +11,14 @@ export const supabase = createClient(supabaseUrl || 'https://missing.invalid', s
   auth: { autoRefreshToken: true, persistSession: true, detectSessionInUrl: false },
 });
 
-export async function api<T>(path: string, body: object | FormData): Promise<T> {
+export async function api<T>(path: string, body: object | FormData, requestKey = crypto.randomUUID()): Promise<T> {
   const { data } = await supabase.auth.getSession();
   if (!data.session) throw new Error('Please sign in again.');
   const response = await fetch(`${(import.meta.env.VITE_API_BASE_URL as string).replace(/\/$/, '')}${path}`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${data.session.access_token}`,
+      'Idempotency-Key': requestKey,
       ...(body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
     },
     body: body instanceof FormData ? body : JSON.stringify(body),
@@ -70,7 +71,22 @@ export async function getPackage(userId: string) {
   const offerings = await Purchases.getOfferings();
   const available = offerings.current?.availablePackages;
   if (!available?.length) throw new Error('No subscription package is configured in RevenueCat.');
-  return available[0];
+  const monthly = available.find(p => p.identifier === '$rc_monthly');
+  if (!monthly) throw new Error('The monthly subscription is unavailable.');
+  return monthly;
+}
+
+export async function getTopUp(userId: string) {
+  await setupBilling(userId);
+  const offerings = await Purchases.getOfferings();
+  const pack = offerings.all.session_topups?.availablePackages.find(p => p.product.identifier === 'studymate_sessions_10_test_v1');
+  if (!pack) throw new Error('The ten-session top-up is unavailable.');
+  return pack;
+}
+export async function purchaseTopUp(userId: string) {
+  const pack = await getTopUp(userId);
+  await Purchases.purchasePackage({ aPackage: pack });
+  // The SDK result cannot grant credits. The authenticated webhook updates the server ledger.
 }
 
 export async function purchase(userId: string) {

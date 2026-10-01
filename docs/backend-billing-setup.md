@@ -18,7 +18,7 @@ Copy `mobile/.env.example` to `mobile/.env`. Set `VITE_SUPABASE_URL` and `VITE_S
 
 The StudyMate RevenueCat project (`da34e8e9`) now has a Test Store (`app056bc4aef7`). Its configured monthly product is `studymate_pro_monthly_test_v2` (REST ID `prode533e97e6d`), USD **5.99**, no free trial. The starter `v1` product used RevenueCat's USD 9.99 default; it is retained for history and is no longer the product in the offering. Test Store price and duration cannot be edited after creation.
 
-Under **Product catalog → Entitlements**, create identifier **`studymate_pro`** and attach the monthly product. Under **Product catalog → Offerings**, create or open the default offering, add a **monthly** package and attach that product. Mark the offering as default if it is not already. The mobile code fetches the current offering's first available package and displays the package's localized `priceString`. Keep just this one package until the UI explicitly supports a choice of plans.
+Under **Product catalog → Entitlements**, create identifier **`studymate_pro`** and attach the monthly product. Under **Product catalog → Offerings**, create or open the default offering, add a **monthly** package and attach that product. Mark the offering as default if it is not already. The mobile code fetches the current offering's `$rc_monthly` package and displays the package's localized `priceString`. Keep just this one package until the UI explicitly supports a choice of plans.
 
 Put the `test_` public SDK key in `mobile/.env` as `VITE_REVENUECAT_PUBLIC_SDK_KEY`. It is for an Android **debug** build only. RevenueCat intentionally crashes a release build that uses this key. A future Google Play release requires real Play products and the Android public SDK key.
 
@@ -38,7 +38,7 @@ The API returned the current offering `default`, package `$rc_monthly`, and prod
 
 The Android client includes the AdMob plugin with Google test app/ad-unit IDs. With `VITE_ADS_ENABLED=true`, an ad is eligible after every second completed practice set, with at least ten minutes between displays. It checks server billing access before loading and again before display. Paid Pro and `studymate_school` entitlements, unknown billing state, denied consent, navigation away and SDK errors skip the ad. The app exposes an Ad privacy button for the native consent form.
 
-The six ad-policy tests pass, and Capacitor sync detects the plugin. Actual native consent, ad display/dismissal and purchase-based suppression still need device testing. No production ad revenue is configured. Production requires the publisher's AdMob app ID, ad-unit ID and consent-message setup; the present implementation deliberately uses test IDs. Schools seat allocation is still a future feature.
+The six ad-policy tests pass, and Capacitor sync detects the plugin. Actual native consent, ad display/dismissal and purchase-based suppression still need device testing. No production ad revenue is configured. Production requires the publisher's AdMob app ID, ad-unit ID and consent-message setup; the present implementation deliberately uses test IDs. Active licensed school memberships now receive server-verified school access; see `commerce-and-schools.md`.
 
 ## OpenAI provider
 
@@ -57,7 +57,7 @@ The deployed database inherited an MCQ-only quiz table. The following additive m
 - `studymate/supabase/migrations/20261001_upgrade_legacy_quiz_schema.sql`: adds practice fields, creates the absent attempts table, enables RLS and installs course ownership policies. `CREATE TABLE IF NOT EXISTS` in the older migration alone did not upgrade the existing table. Live REST schema and subsequent question generation passed.
 - `studymate/supabase/migrations/20261001_add_legacy_course_readiness.sql`: adds the missing course readiness field. Existing course values are not overwritten; null lets the report calculate readiness from saved activity. Subsequent PDF export returned 200 and included the fixture course and source filename.
 
-These migrations do not implement mobile answer persistence, secure grading, monthly quotas or school seats. Temporary synthetic test courses/files were removed. The existing judge account still owns 18 courses and its password was not changed.
+The subsequent `20261001_usage_credits_schools.sql` migration implements commercial tables, quotas, credit RPCs, school seats/timer and protected server grading. Temporary synthetic test courses/files were removed. The existing judge account still owns 18 courses and its password was not changed.
 
 ## 4. Verify end to end
 
@@ -69,7 +69,7 @@ These migrations do not implement mobile answer persistence, secure grading, mon
 
 ## Current pricing and product boundary
 
-No monetary price is hardcoded or configured in the repository. Today the enforced paid difference is **three questions per free set versus five per Pro set**. The accepted Free/Pro/Schools pricing and monthly allowances are recorded in `docs/pricing-proposal.md`; their quotas are not implemented. The app does not yet persist answers from its self-check into the revision PDF. Do not advertise proposed limits as live benefits.
+The approved testing boundary is Free (one active course, three monthly sessions), Pro (five courses, thirty sessions), a ten-session USD 1.99 consumable, and Schools (25-seat 30-day pilot, 300 pooled monthly sessions, thirty per person). USD 5.99/month is configured in the subscription Test Store. Limits are enforced by the backend. See `commerce-and-schools.md` for setup, credit refunds, assigned timers and verification limits.
 
 The target audience is both Nigerian and international university students. A single monthly subscription can use Google Play regional prices when real Play billing is configured; the Test Store's provisional price only exercises the purchase flow. Decide a Nigerian price and an international price after measuring the cost of a typical upload, explanation and practice session. Record the proposed paid allowance and gross margin before activating a real product. Google Play supports per-country base-plan pricing; RevenueCat returns the buyer's localized product price to the SDK.
 

@@ -1,3 +1,4 @@
+import { withStudyQuota } from "@/lib/metered-route";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getAuthenticatedRouteSupabase, unauthorizedResponse } from "@/lib/route-helpers";
@@ -12,9 +13,9 @@ const payloadSchema = z.object({
   mode: z.enum(["plain", "story"]).optional(),
 });
 
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
   try {
-    const authenticated = await getAuthenticatedRouteSupabase();
+    const authenticated = await getAuthenticatedRouteSupabase(request);
     if (!authenticated) {
       return unauthorizedResponse();
     }
@@ -57,3 +58,5 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+export const POST = withStudyQuota(handlePost, "examanswer");

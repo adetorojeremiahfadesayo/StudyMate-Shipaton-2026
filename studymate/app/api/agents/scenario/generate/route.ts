@@ -1,12 +1,13 @@
+import { withStudyQuota } from "@/lib/metered-route";
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedRouteSupabase, requireCourseOwnership, unauthorizedResponse } from "@/lib/route-helpers";
 import { generateScenario } from "@/lib/scenario-agent";
 
 export const runtime = "nodejs";
 
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
   try {
-    const authenticated = await getAuthenticatedRouteSupabase();
+    const authenticated = await getAuthenticatedRouteSupabase(request);
     if (!authenticated) {
       return unauthorizedResponse();
     }
@@ -48,3 +49,5 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+export const POST = withStudyQuota(handlePost, "scenario");

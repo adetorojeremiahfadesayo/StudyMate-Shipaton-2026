@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedRouteSupabase, unauthorizedResponse } from "@/lib/route-helpers";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { getStudyPlan, meteringEnabled, checked } from '@/lib/study-usage';
+import { usageError } from '@/lib/metered-route';
 
 export const runtime = "nodejs";
 
@@ -12,6 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { user } = authenticated;
+    if (meteringEnabled()) await getStudyPlan(user.id);
 
     const body = (await request.json()) as {
       name?: string;
@@ -35,11 +38,13 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (insertError) {
+      if (meteringEnabled()) checked({ data: null, error: insertError });
       return NextResponse.json({ error: insertError.message }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, id: data.id });
   } catch (error) {
+    if (meteringEnabled()) return usageError(error);
     const message = error instanceof Error ? error.message : "Failed to create course.";
     return NextResponse.json({ error: message }, { status: 500 });
   }

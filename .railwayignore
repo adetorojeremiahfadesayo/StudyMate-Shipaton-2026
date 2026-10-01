@@ -1,0 +1,10 @@
+# The existing Railway service uses /studymate. Mobile assets stay in the native client.
+/mobile/
+/docs/
+/.github/
+/.playwright-cli/
+.env
+.env.*
+node_modules/
+.next/
+coverage/
